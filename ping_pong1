@@ -1,0 +1,102 @@
+from pygame import *
+from random import randint
+
+font.init()
+font1 = font.SysFont('Arial', 80)
+win = font1.render('YOU WIN!', True, (255, 255, 255))
+lose = font1.render('YOU LOSE!', True, (180, 0, 0))
+img_back = 'sky.jpg'
+img_rocket = 'rocket.jpg'
+img_ball = 'ball.jpg'  
+
+font2 = font.SysFont('Arial', 36)
+
+class GameSprite(sprite.Sprite):
+    def __init__(self, player_image, player_x, player_y, size_x, size_y, player_speed):
+        sprite.Sprite.__init__(self)
+        self.image = transform.scale(image.load(player_image), (size_x, size_y))
+        self.speed = player_speed
+        self.rect = self.image.get_rect()
+        self.rect.x = player_x
+        self.rect.y = player_y
+    
+    def reset(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+
+class Player(GameSprite):
+    def update_l(self):
+        keys = key.get_pressed()
+        # Исправлено управление для левой ракетки
+        if keys[K_w] and self.rect.y > 5:  # W для вверх
+            self.rect.y -= self.speed
+        if keys[K_s] and self.rect.y < win_height - 80:  # S для вниз
+            self.rect.y += self.speed
+    def update_r(self):
+        keys = key.get_pressed()
+        # Управление для правой ракетки (стрелки)
+        if keys[K_UP] and self.rect.y > 5:
+            self.rect.y -= self.speed
+        if keys[K_DOWN] and self.rect.y < win_height - 80:
+            self.rect.y += self.speed
+
+
+class Ball(GameSprite):
+    def __init__(self, player_image, player_x, player_y, size_x, size_y, speed_x, speed_y):
+        super().__init__(player_image, player_x, player_y, size_x, size_y, 0)
+        self.speed_x = speed_x
+        self.speed_y = speed_y
+    
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+        
+        # Отскок от верхней и нижней границы
+        if self.rect.y <= 0 or self.rect.y >= win_height - 30:
+            self.speed_y *= -1
+
+win_width = 700
+win_height = 500
+display.set_caption("Ping_pong")
+window = display.set_mode((win_width, win_height))
+background = transform.scale(image.load(img_back), (win_width, win_height))
+
+rocket1 = Player(img_rocket, 5, win_height//2 - 40, 20, 80, 10)  # Левая ракетка
+rocket2 = Player(img_rocket, win_width - 25, win_height//2 - 40, 20, 80, 10)  # Правая ракетка
+ball = Ball(img_ball, win_width//2 - 15, win_height//2 - 15, 30, 30, 5, 5)
+
+finish = False
+run = True
+
+while run:
+    for e in event.get():
+        if e.type == QUIT:
+            run = False
+    
+    if not finish:
+        window.blit(background, (0, 0))
+        
+        # Обновление спрайтов
+        rocket1.update_l()
+        rocket2.update_r()
+        ball.update()
+        
+        # Проверка столкновения с ракетками
+        if sprite.collide_rect(ball, rocket1) or sprite.collide_rect(ball, rocket2):
+            ball.speed_x *= -1  # Отскок мяча
+        
+        # Проверка выхода мяча за пределы
+        if ball.rect.x <= 0:
+            finish = True
+            window.blit(lose, (win_width//2 - 100, win_height//2))
+        elif ball.rect.x >= win_width - 30:
+            finish = True
+            window.blit(lose, (win_width//2 - 100, win_height//2))
+        
+        # Отрисовка
+        rocket1.reset()
+        rocket2.reset()
+        ball.reset()
+        
+        display.update()
+    
+    time.delay(50)
