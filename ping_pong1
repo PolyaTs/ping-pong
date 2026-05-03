@@ -3,7 +3,7 @@ from random import randint
 
 font.init()
 font1 = font.SysFont('Arial', 80)
-lose1 = font1.render('Player 1 lose!', True, (255, 255, 255))
+lose1 = font1.render('Player 1 lose!', True, (180, 0, 0))
 lose2 = font1.render('Player 2 lose!', True, (180, 0, 0))
 img_back = 'sky.jpg'
 img_rocket = 'rocket.jpg'
