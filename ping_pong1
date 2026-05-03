@@ -3,8 +3,8 @@ from random import randint
 
 font.init()
 font1 = font.SysFont('Arial', 80)
-win = font1.render('YOU WIN!', True, (255, 255, 255))
-lose = font1.render('YOU LOSE!', True, (180, 0, 0))
+lose1 = font1.render('Player 1 lose!', True, (255, 255, 255))
+lose2 = font1.render('Player 2 lose!', True, (180, 0, 0))
 img_back = 'sky.jpg'
 img_rocket = 'rocket.jpg'
 img_ball = 'ball.jpg'  
@@ -87,10 +87,10 @@ while run:
         # Проверка выхода мяча за пределы
         if ball.rect.x <= 0:
             finish = True
-            window.blit(lose, (win_width//2 - 100, win_height//2))
+            window.blit(lose1, (win_width//2 - 100, win_height//2))
         elif ball.rect.x >= win_width - 30:
             finish = True
-            window.blit(lose, (win_width//2 - 100, win_height//2))
+            window.blit(lose2, (win_width//2 - 100, win_height//2))
         
         # Отрисовка
         rocket1.reset()
